@@ -1,0 +1,1 @@
+export { errorOptions404, errorOptions500, error404, error500 } from './error';

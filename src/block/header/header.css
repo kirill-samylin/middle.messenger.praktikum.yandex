@@ -1,0 +1,35 @@
+.header {
+  display: flex;
+  width: 100%;
+  height: 60px;
+  margin: 0;
+  justify-content: space-between;
+  border-bottom: 3px solid #72767D;
+  box-sizing: border-box;
+}
+.header__menu {
+  display: flex;
+  align-items: center;
+  margin-left: 35px;
+}
+.header__link {
+  font-size: 18px;
+  color: #FFFFFF;
+  text-decoration: none;
+  vertical-align: top;
+  line-height: 25px;
+  height: 30px;
+  display: inline-block;
+  box-sizing: border-box;
+  margin-right: 30px;
+}
+.header__link_active {
+  border-bottom: 1px solid #FFFFFF;
+}
+.header__profile {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 35px;
+  min-width: 200px;
+}
