@@ -1,13 +1,14 @@
 .input {
   font-size: 14px;
   margin: 32px 30px 0;
-  color: #FFFFFF;
+  color: #fff;
   font-weight: bold;
   background: none;
   outline: none;
   border: none;
-  border-bottom: 1px solid #72767D;
+  border-bottom: 1px solid #72767d;
 }
+
 .input::placeholder {
-  color: #999999;
+  color: #999;
 }

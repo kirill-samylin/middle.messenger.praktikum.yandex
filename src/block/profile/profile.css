@@ -4,28 +4,33 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
 .profile__name {
   font-size: 16px;
-  color: #FFFFFF;
+  color: #fff;
 }
+
 .profile {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 50px;
 }
+
 .profile__avatar {
   width: 130px;
   height: 130px;
   border-radius: 50%;
   object-fit: cover;
 }
+
 .profile__title {
   font-size: 16px;
-  color: #FFFFFF;
+  color: #fff;
   font-weight: normal;
   margin: 21px 0 44px 0;
 }
+
 .profile__list {
   list-style: none;
   padding: 0;
@@ -34,26 +39,30 @@
   width: 100%;
   margin-bottom: 34px;
 }
+
 .profile__item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #72767D;
+  border-bottom: 1px solid #72767d;
   height: 33px;
 }
+
 .profile__label {
   font-size: 13px;
-  color: #FFFFFF;
+  color: #fff;
 }
+
 .profile__input {
   background: none;
   border: none;
-  color: #999999;
+  color: #999;
   font-size: 13px;
   text-align: right;
 }
+
 .profile__link {
   font-size: 13px;
   text-decoration: none;
-  color: #728BD7;
+  color: #728bd7;
 }

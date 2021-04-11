@@ -1,1 +1,0 @@
-export { headerOptions, header } from './header';

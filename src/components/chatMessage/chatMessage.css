@@ -7,6 +7,7 @@
   z-index: 0;
   height: calc(100% - 60px);
 }
+
 .chat__intervals {
   margin: 0;
   padding: 0;
@@ -15,49 +16,52 @@
   overflow: auto;
   display: flex;
   align-items: flex-end;
-
 }
+
 .chat__interval {
   width: 100%;
 }
+
 .chat__time {
   text-align: center;
-  color: #999999;
+  color: #999;
   font-size: 12px;
   margin: 0;
   margin-bottom: 32px;
 }
+
 .chat__name {
   font-size: 13px;
-  color: #728BD7;
+  color: #728bd7;
   font-weight: 600;
   margin: 0;
   margin-bottom: 4px;
 }
+
 .chat_message {
+  display: flex;
   margin-bottom: 20px;
+  align-items: center;
 }
+
 .chat__user {
   display: flex;
   align-items: center;
 }
+
 .chat__messages {
   list-style: none;
   padding: 0;
   margin: 0 35px;
 }
-.chat_message {
-  align-items: center;
-}
+
 .chat__info {
   margin-left: 12px;
 }
-.chat_message {
-  display: flex;
-}
+
 .chat__clock {
   font-size: 12px;
-  color: #999999;
+  color: #999;
   margin: 0;
   margin-left: 4px;
 }

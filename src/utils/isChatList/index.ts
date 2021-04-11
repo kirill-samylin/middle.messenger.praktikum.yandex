@@ -1,0 +1,1 @@
+export { isChatList } from './isChatList';

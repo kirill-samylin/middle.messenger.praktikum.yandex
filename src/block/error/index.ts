@@ -1,0 +1,1 @@
+export { error404, error500 } from './error';

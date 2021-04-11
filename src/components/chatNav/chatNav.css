@@ -3,9 +3,10 @@
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  border-bottom: 3px solid #72767D;
+  border-bottom: 3px solid #72767d;
   box-sizing: border-box;
 }
+
 .chat__search {
   background: none;
   background-image: url(../../../static/img/icons/search.svg);
@@ -15,8 +16,9 @@
   font-size: 16px;
   margin-left: 35px;
   outline: none;
-  color: #FFFFFF;
+  color: #fff;
 }
+
 .chat__button {
   margin-right: 35px;
   background: none;
@@ -26,25 +28,29 @@
   display: flex;
   align-items: center;
 }
+
 .chat__button_add {
   width: 30px;
   height: 30px;
-  border: 1.5px solid #728BD7;
+  border: 1.5px solid #728bd7;
   border-radius: 50%;
   background-image: url(../../../static/img/icons/plus.svg);
   background-repeat: no-repeat;
   background-position: 6px 6px;
 }
+
 .chat__title {
   font-size: 20px;
-  color: #FFFFFF;
+  color: #fff;
   margin: 0;
 }
+
 .chat__block {
   margin-right: 35px;
   display: flex;
   align-items: center;
 }
+
 .chat__button_edit {
   height: 4px;
   width: 20px;

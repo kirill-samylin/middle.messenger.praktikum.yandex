@@ -1,0 +1,15 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "env": {
+        "es6": true,
+        "browser": true,
+        "mocha": true,
+        "node": true
+    },
+    "plugins": ["@typescript-eslint"],
+    "extends": ["eslint:recommended"],
+    "rules": {
+        "react": "off",
+        "no-unused-vars": "off"
+    }
+}
