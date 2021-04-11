@@ -10110,78 +10110,617 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions['.handlebars'] = extension;
   require.extensions['.hbs'] = extension;
 }
-},{"../dist/cjs/handlebars":"../node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"../node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","fs":"../node_modules/parcel-bundler/src/builtins/_empty.js"}],"../src/modules/templator.js":[function(require,module,exports) {
+},{"../dist/cjs/handlebars":"../node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"../node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","fs":"../node_modules/parcel-bundler/src/builtins/_empty.js"}],"../src/utils/Handlebars/Handlebars.ts":[function(require,module,exports) {
+"use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compileTemplate = void 0;
+
+var handlebars_1 = __importDefault(require("handlebars")); // interface IObj {
+//   tag: string | undefined
+//   name: string
+//   fn?: Function
+//   text?: string
+// }
+
+
+function compileTemplate() {
+  var templateString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+  return handlebars_1.default.compile(templateString);
+}
+
+exports.compileTemplate = compileTemplate; // function createElement(obj: IObj) {
+//   const element: HTMLElement = document.createElement(obj.tag || 'div');
+//   for (let key in obj) {
+//     if (key!=='tag') {
+//       if (key==='text') {
+//         element.textContent = obj[key];
+//       } else if (key==='event') {
+//         element.addEventListener(obj[key].name, obj[key].fn);
+//       } else {
+//         element.setAttribute(key, obj[key]);
+//       }
+//     }
+//   }
+//   return new Handlebars.SafeString(element.outerHTML);
+// }
+// Handlebars.registerHelper('element', function(item: IObj) {
+//   if (!item) return undefined
+//   return createElement(item)
+// });
+// Handlebars.registerHelper('elements', function(items: IObj[]) {
+//   if (!items) return undefined
+//   const elements = items.map((item) => createElement(item));
+//   return elements.join("");
+// });
+// Handlebars.registerHelper('stringifyFunc', function(fn: Function) {
+//   return new Handlebars.SafeString(`(${fn.toString().replace(/\"/g,"'")})()`);
+// });
+},{"handlebars":"../node_modules/handlebars/lib/index.js"}],"../src/utils/Handlebars/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.compileTemplate = compileTemplate;
+exports.compileTemplate = void 0;
 
-var _handlebars = _interopRequireDefault(require("handlebars"));
+var Handlebars_1 = require("./Handlebars");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+Object.defineProperty(exports, "compileTemplate", {
+  enumerable: true,
+  get: function get() {
+    return Handlebars_1.compileTemplate;
+  }
+});
+},{"./Handlebars":"../src/utils/Handlebars/Handlebars.ts"}],"../src/modules/EventBus/EventBus.ts":[function(require,module,exports) {
+"use strict";
 
-function compileTemplate() {
-  var templateString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  return _handlebars.default.compile(templateString);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.EventBus = void 0;
+
+var EventBus = /*#__PURE__*/function () {
+  function EventBus() {
+    _classCallCheck(this, EventBus);
+
+    this.listeners = {};
+  }
+
+  _createClass(EventBus, [{
+    key: "checkExistenceEvent",
+    value: function checkExistenceEvent(event) {
+      if (!this.listeners[event]) {
+        throw new Error("\u041D\u0435\u0442 \u0441\u043E\u0431\u044B\u0442\u0438\u044F: ".concat(event));
+      }
+    }
+  }, {
+    key: "on",
+    value: function on(event, callback) {
+      if (!this.listeners[event]) {
+        this.listeners[event] = [];
+      }
+
+      this.listeners[event].push(callback);
+    }
+  }, {
+    key: "off",
+    value: function off(event, callback) {
+      this.checkExistenceEvent(event);
+      this.listeners[event] = this.listeners[event].filter(function (listener) {
+        return listener !== callback;
+      });
+    }
+  }, {
+    key: "emit",
+    value: function emit(event) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      this.checkExistenceEvent(event);
+      this.listeners[event].forEach(function (listener) {
+        listener.apply(void 0, args);
+      });
+    }
+  }]);
+
+  return EventBus;
+}();
+
+exports.EventBus = EventBus;
+},{}],"../node_modules/uuid/lib/rng-browser.js":[function(require,module,exports) {
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
 }
 
-function createElement(obj) {
-  console.log(obj);
-  var element = document.createElement(obj.tag || 'div');
+},{}],"../node_modules/uuid/lib/bytesToUuid.js":[function(require,module,exports) {
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
+}
 
-  for (var key in obj) {
-    if (key !== 'tag') {
-      if (key === 'text') {
-        element.textContent = obj[key];
-      } else if (key === 'event') {
-        element.addEventListener(obj[key].name, obj[key].fn);
-      } else {
-        element.setAttribute(key, obj[key]);
-      }
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]]
+  ]).join('');
+}
+
+module.exports = bytesToUuid;
+
+},{}],"../node_modules/uuid/v1.js":[function(require,module,exports) {
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+var _clockseq;
+
+// Previous uuid creation time
+var _lastMSecs = 0;
+var _lastNSecs = 0;
+
+// See https://github.com/uuidjs/uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
     }
   }
 
-  return new _handlebars.default.SafeString(element.outerHTML);
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : bytesToUuid(b);
 }
 
-_handlebars.default.registerHelper('element', function (item) {
-  if (!item) return undefined;
-  return createElement(item);
-});
+module.exports = v1;
 
-_handlebars.default.registerHelper('elements', function (items) {
-  if (!items) return undefined;
-  var elements = items.map(function (item) {
-    return createElement(item);
-  });
-  return elements.join("");
-});
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"../node_modules/uuid/v4.js":[function(require,module,exports) {
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
 
-_handlebars.default.registerHelper('stringifyFunc', function (fn) {
-  return new _handlebars.default.SafeString("(".concat(fn.toString().replace(/\"/g, "'"), ")()"));
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
+    }
+  }
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"../node_modules/uuid/index.js":[function(require,module,exports) {
+var v1 = require('./v1');
+var v4 = require('./v4');
+
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+
+module.exports = uuid;
+
+},{"./v1":"../node_modules/uuid/v1.js","./v4":"../node_modules/uuid/v4.js"}],"../src/modules/Block/Block.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
-},{"handlebars":"../node_modules/handlebars/lib/index.js"}],"../src/block/header/header.tmpl.js":[function(require,module,exports) {
+exports.Block = void 0;
+
+var EventBus_1 = require("./../EventBus/EventBus");
+
+var uuid_1 = require("uuid");
+
+var EVENTS;
+
+(function (EVENTS) {
+  EVENTS["INIT"] = "init";
+  EVENTS["FLOW_CDM"] = "flow:component-did-mount";
+  EVENTS["FLOW_RENDER"] = "flow:render";
+  EVENTS["FLOW_CDU"] = "flow:component-did-update";
+})(EVENTS || (EVENTS = {}));
+
+;
+
+var Block = /*#__PURE__*/function () {
+  function Block(props, tmpl) {
+    var _this = this;
+
+    _classCallCheck(this, Block);
+
+    this.setProps = function (nextProps) {
+      if (!nextProps) {
+        return;
+      }
+
+      _this.props = Object.assign(_this.props, nextProps);
+
+      _this.eventBus.emit(EVENTS.FLOW_CDU, _this.props, nextProps);
+    };
+
+    this.shell = null;
+    ;
+    this.eventBus = new EventBus_1.EventBus();
+    this.element = null;
+    this._id = uuid_1.v4();
+    this.tmpl = tmpl || '';
+    this.props = this.makePropsProxy(props);
+    this.registerEvents();
+    this.eventBus.emit(EVENTS.INIT);
+  }
+
+  _createClass(Block, [{
+    key: "registerEvents",
+    value: function registerEvents() {
+      var _this2 = this;
+
+      this.eventBus.on(EVENTS.INIT, this.init.bind(this));
+      this.eventBus.on(EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+      this.eventBus.on(EVENTS.FLOW_RENDER, this._render.bind(this));
+      this.eventBus.on(EVENTS.FLOW_CDU, function () {
+        var oldProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var newProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        return _this2._componentDidUpdate(oldProps, newProps);
+      });
+    }
+  }, {
+    key: "_createShell",
+    value: function _createShell() {
+      this.shell = this._createDocumentElement("div");
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this._createShell();
+
+      this.eventBus.emit(EVENTS.FLOW_CDM);
+    }
+  }, {
+    key: "_componentDidMount",
+    value: function _componentDidMount() {
+      this.componentDidMount();
+      this.eventBus.emit(EVENTS.FLOW_RENDER);
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "_componentDidUpdate",
+    value: function _componentDidUpdate(oldProps, newProps) {
+      var response = this.componentDidUpdate(oldProps, newProps);
+
+      if (response) {
+        this.eventBus.emit(EVENTS.FLOW_RENDER);
+      }
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(oldProps, newProps) {
+      Object.assign(oldProps, newProps);
+      return true;
+    }
+  }, {
+    key: "_addEvents",
+    value: function _addEvents() {
+      var _this3 = this;
+
+      var _this$props$events = this.props.events,
+          events = _this$props$events === void 0 ? [] : _this$props$events; //console.log(document)
+
+      events.forEach(function (event) {
+        var _a;
+
+        var name = event.name,
+            selector = event.selector,
+            cb = event.cb;
+        var element = (_a = _this3.element) === null || _a === void 0 ? void 0 : _a.querySelector(selector);
+
+        if (element) {
+          element.addEventListener(name, cb);
+        }
+      });
+    }
+  }, {
+    key: "_render",
+    value: function _render() {
+      var _a, _b;
+
+      var tempaler = this.render();
+      var element = tempaler(this.props);
+      if (element === null || this.shell === null) return;
+      this.shell.innerHTML = element;
+
+      if (this.element === null) {
+        this.element = this.shell.firstElementChild;
+        (_a = this.element) === null || _a === void 0 ? void 0 : _a.setAttribute('data-id', this._id);
+      } else {
+        (_b = this.element) === null || _b === void 0 ? void 0 : _b.replaceWith(this.shell.firstElementChild);
+      }
+
+      this._addEvents();
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "render",
+    value: function render() {}
+  }, {
+    key: "getElement",
+    value: function getElement() {
+      return this.element;
+    }
+  }, {
+    key: "getContent",
+    value: function getContent() {
+      var _a;
+
+      return (_a = this.element) === null || _a === void 0 ? void 0 : _a.outerHTML;
+    }
+  }, {
+    key: "makePropsProxy",
+    value: function makePropsProxy(props) {
+      return new Proxy(props, {
+        set: function set(target, prop, value) {
+          if (prop.indexOf('_') !== -1) {
+            throw new Error('нет доступа');
+          }
+
+          target[prop] = value;
+          return true;
+        },
+        deleteProperty: function deleteProperty() {
+          throw new Error('нет доступа');
+        }
+      });
+    }
+  }, {
+    key: "_createDocumentElement",
+    value: function _createDocumentElement() {
+      var tagName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "div";
+      return document.createElement(tagName);
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      this.element.style.display = "block";
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.element.style.display = "none";
+    }
+  }]);
+
+  return Block;
+}();
+
+exports.Block = Block;
+},{"./../EventBus/EventBus":"../src/modules/EventBus/EventBus.ts","uuid":"../node_modules/uuid/index.js"}],"../src/modules/Block/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Block = void 0;
+
+var Block_1 = require("./Block");
+
+Object.defineProperty(exports, "Block", {
+  enumerable: true,
+  get: function get() {
+    return Block_1.Block;
+  }
+});
+},{"./Block":"../src/modules/Block/Block.ts"}],"../src/block/header/header.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.headerTmpl = void 0;
-var headerTmpl = "\n<header class=\"header\">\n    <nav class=\"header__menu\">\n      {{#each links}}\n        <a class=\"header__link {{this.active}}\" href=\"{{this.link}}\">{{this.text}}</a>\n      {{/each}}\n    </nav>\n    <div class=\"header__profile\">\n      <p class=\"profile__name\">{{firstname}} {{lastname}}</p>\n      <img class=\"profile__ava\" src=\"{{avatar}}\" alt=\"{{firstname}}\">\n    </div>\n  </header>";
-exports.headerTmpl = headerTmpl;
-},{}],"../src/block/header/header.js":[function(require,module,exports) {
+exports.headerTmpl = "\n<header class=\"header\">\n    <nav class=\"header__menu\">\n      {{#each links}}\n        <a class=\"header__link {{this.active}}\" href=\"{{this.link}}\">{{this.text}}</a>\n      {{/each}}\n    </nav>\n    <div class=\"header__profile\">\n      <p class=\"profile__name\">{{firstname}} {{lastname}}</p>\n      <img class=\"profile__ava\" src=\"{{avatar}}\" alt=\"{{firstname}}\">\n    </div>\n  </header>";
+},{}],"../src/block/header/header.ts":[function(require,module,exports) {
 "use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.header = exports.headerOptions = void 0;
+exports.header = void 0;
 
-var _templator = require("../../modules/templator");
+var Handlebars_1 = require("../../utils/Handlebars");
 
-var _header = require("./header.tmpl");
+var Block_1 = require("../../modules/Block");
+
+var header_tmpl_1 = require("./header.tmpl");
 
 var linkActive = function linkActive(href) {
   if ("/".concat(href) === window.location.pathname) {
@@ -10209,62 +10748,151 @@ var headerOptions = {
     text: 'Выход'
   }]
 };
-exports.headerOptions = headerOptions;
-var header = (0, _templator.compileTemplate)(_header.headerTmpl); //header__link_active
 
-exports.header = header;
-},{"../../modules/templator":"../src/modules/templator.js","./header.tmpl":"../src/block/header/header.tmpl.js"}],"../src/block/header/index.js":[function(require,module,exports) {
+var Header = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(Header, _Block_1$Block);
+
+  var _super = _createSuper(Header);
+
+  function Header(props, tmpl) {
+    _classCallCheck(this, Header);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(Header, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return Header;
+}(Block_1.Block);
+
+exports.header = new Header(headerOptions, header_tmpl_1.headerTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","../../modules/Block":"../src/modules/Block/index.ts","./header.tmpl":"../src/block/header/header.tmpl.ts"}],"../src/block/header/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "headerOptions", {
-  enumerable: true,
-  get: function () {
-    return _header.headerOptions;
-  }
-});
+exports.header = void 0;
+
+var header_1 = require("./header");
+
 Object.defineProperty(exports, "header", {
   enumerable: true,
-  get: function () {
-    return _header.header;
+  get: function get() {
+    return header_1.header;
   }
 });
-
-var _header = require("./header");
-},{"./header":"../src/block/header/header.js"}],"../src/block/chat/chat.tmpl.js":[function(require,module,exports) {
+},{"./header":"../src/block/header/header.ts"}],"../src/block/chat/chat.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chatTmpl = void 0;
-var chatTmpl = "\n<section class=\"chat\">\n  {{{navigation}}}\n  {{{main}}}\n  {{{message}}}\n</section>";
-exports.chatTmpl = chatTmpl;
-},{}],"../src/components/chatNav/chatNav.tmpl.js":[function(require,module,exports) {
+exports.chatTmpl = "\n<section class=\"chat\">\n  {{{navigation}}}\n  {{{main}}}\n  {{{message}}}\n</section>";
+},{}],"../src/components/chatNav/chatNav.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chatNavTmpl = void 0;
-var chatNavTmpl = "\n<nav class=\"chat__nav\">\n  {{#if chatlist}}\n    <input class=\"chat__search\" type=\"text\" placeholder=\"\u041F\u043E\u0438\u0441\u043A\">\n    <button class=\"chat__button chat__button_add\" type=\"button\"></button>\n  {{else}}\n    <a class=\"chat__back\" href=\"index.html\">\u041D\u0430\u0437\u0430\u0434</a>\n    <h3 class=\"chat__title\">{{chatname}}</h3>\n    <div class=\"chat__block\">\n      <button class=\"chat__button chat__button_edit\" type=\"button\"></button>\n      <img class=\"profile__ava\" src=\"{{chatava}}\" alt=\"{{chatname}}\">\n    </div>\n  {{/if}}\n</nav>";
-exports.chatNavTmpl = chatNavTmpl;
-},{}],"../src/utils/isChatList.js":[function(require,module,exports) {
+exports.chatNavTmpl = "\n<nav class=\"chat__nav\">\n  {{#if chatlist}}\n    <input class=\"chat__search\" type=\"text\" placeholder=\"\u041F\u043E\u0438\u0441\u043A\">\n    <button class=\"chat__button chat__button_add\" type=\"button\"></button>\n  {{else}}\n    <a class=\"chat__back\" href=\"index.html\">\u041D\u0430\u0437\u0430\u0434</a>\n    <h3 class=\"chat__title\">{{chatname}}</h3>\n    <div class=\"chat__block\">\n      <button class=\"chat__button chat__button_edit\" type=\"button\"></button>\n      <img class=\"profile__ava\" src=\"{{chatava}}\" alt=\"{{chatname}}\">\n    </div>\n  {{/if}}\n</nav>";
+},{}],"../src/utils/isChatList/isChatList.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = isChatList;
+exports.isChatList = void 0;
 
 function isChatList() {
   return window.location.pathname === '/index.html';
 }
+
+exports.isChatList = isChatList;
 },{}],"img/user2.png":[function(require,module,exports) {
 module.exports = "/user2.e8d166c4.png";
-},{}],"../src/components/chatNav/chatNav.js":[function(require,module,exports) {
+},{}],"../src/components/chatNav/chatNav.ts":[function(require,module,exports) {
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.chatNav = exports.chatNavOptions = void 0;
+
+var Handlebars_1 = require("../../utils/Handlebars");
+
+var chatNav_tmpl_1 = require("./chatNav.tmpl");
+
+var isChatList_1 = require("../../utils/isChatList/isChatList");
+
+var Block_1 = require("../../modules/Block");
+
+var user2_png_1 = __importDefault(require("../../../static/img/user2.png"));
+
+exports.chatNavOptions = {
+  chatlist: isChatList_1.isChatList(),
+  chatname: 'Виктор',
+  chatava: user2_png_1.default
+};
+
+var ChatNav = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(ChatNav, _Block_1$Block);
+
+  var _super = _createSuper(ChatNav);
+
+  function ChatNav(props, tmpl) {
+    _classCallCheck(this, ChatNav);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(ChatNav, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return ChatNav;
+}(Block_1.Block);
+
+exports.chatNav = new ChatNav(exports.chatNavOptions, chatNav_tmpl_1.chatNavTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","./chatNav.tmpl":"../src/components/chatNav/chatNav.tmpl.ts","../../utils/isChatList/isChatList":"../src/utils/isChatList/isChatList.ts","../../modules/Block":"../src/modules/Block/index.ts","../../../static/img/user2.png":"img/user2.png"}],"../src/components/chatNav/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10272,87 +10900,90 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.chatNav = exports.chatNavOptions = void 0;
 
-var _templator = require("../../modules/templator");
+var chatNav_1 = require("./chatNav");
 
-var _chatNav = require("./chatNav.tmpl");
-
-var _isChatList = _interopRequireDefault(require("../../utils/isChatList"));
-
-var _user = _interopRequireDefault(require("../../../static/img/user2.png"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var chatNavOptions = {
-  chatlist: (0, _isChatList.default)(),
-  chatname: 'Виктор',
-  chatava: _user.default
-};
-exports.chatNavOptions = chatNavOptions;
-var chatNav = (0, _templator.compileTemplate)(_chatNav.chatNavTmpl);
-exports.chatNav = chatNav;
-},{"../../modules/templator":"../src/modules/templator.js","./chatNav.tmpl":"../src/components/chatNav/chatNav.tmpl.js","../../utils/isChatList":"../src/utils/isChatList.js","../../../static/img/user2.png":"img/user2.png"}],"../src/components/chatNav/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 Object.defineProperty(exports, "chatNavOptions", {
   enumerable: true,
-  get: function () {
-    return _chatNav.chatNavOptions;
+  get: function get() {
+    return chatNav_1.chatNavOptions;
   }
 });
 Object.defineProperty(exports, "chatNav", {
   enumerable: true,
-  get: function () {
-    return _chatNav.chatNav;
+  get: function get() {
+    return chatNav_1.chatNav;
   }
 });
-
-var _chatNav = require("./chatNav");
-},{"./chatNav":"../src/components/chatNav/chatNav.js"}],"../src/components/chatList/chatList.tmpl.js":[function(require,module,exports) {
+},{"./chatNav":"../src/components/chatNav/chatNav.ts"}],"../src/components/chatList/chatList.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chatListTmpl = void 0;
-var chatListTmpl = "\n<ul class=\"chat__list\">\n  {{#each list}}\n    <li class=\"chat__item\">\n      <a class=\"chat__link\" href=\"{{this.link}}\">\n        <div class=\"chat__author\">\n          <img class=\"profile__ava\" src=\"{{this.user.avatar}}\" alt=\"{{this.user.firstname}}\">\n          <div class=\"chat__user-info\">\n            <p class=\"chat__user-name\">{{this.user.firstname}} {{this.user.lastname}}</p>\n            <p class=\"chat__user-message\">{{this.lastmessage}}</p>\n          </div>\n        </div>\n        <div class=\"chat__message-info\">\n          <p class=\"chat__date\">{{this.time}}</p>\n          {{#if this.missed}}\n            <span class=\"chat__missed\">{{this.missed}}</span>\n          {{/if}}\n        </div>\n      </a>\n    </li>\n  {{/each}}\n</ul>\n";
-exports.chatListTmpl = chatListTmpl;
+exports.chatListTmpl = "\n<ul class=\"chat__list\">\n  {{#each list}}\n    <li class=\"chat__item\">\n      <a class=\"chat__link\" href=\"{{this.link}}\">\n        <div class=\"chat__author\">\n          <img class=\"profile__ava\" src=\"{{this.user.avatar}}\" alt=\"{{this.user.firstname}}\">\n          <div class=\"chat__user-info\">\n            <p class=\"chat__user-name\">{{this.user.firstname}} {{this.user.lastname}}</p>\n            <p class=\"chat__user-message\">{{this.lastmessage}}</p>\n          </div>\n        </div>\n        <div class=\"chat__message-info\">\n          <p class=\"chat__date\">{{this.time}}</p>\n          {{#if this.missed}}\n            <span class=\"chat__missed\">{{this.missed}}</span>\n          {{/if}}\n        </div>\n      </a>\n    </li>\n  {{/each}}\n</ul>\n";
 },{}],"img/user.png":[function(require,module,exports) {
 module.exports = "/user.51f6508b.png";
 },{}],"img/user3.png":[function(require,module,exports) {
 module.exports = "/user3.ef99b2df.png";
 },{}],"img/user4.png":[function(require,module,exports) {
 module.exports = "/user4.0caa344d.png";
-},{}],"../src/components/chatList/chatList.js":[function(require,module,exports) {
+},{}],"../src/components/chatList/chatList.ts":[function(require,module,exports) {
 "use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.chatList = exports.chatListOptions = void 0;
+exports.chatList = void 0;
 
-var _templator = require("../../modules/templator");
+var Handlebars_1 = require("../../utils/Handlebars");
 
-var _chatList = require("./chatList.tmpl");
+var chatList_tmpl_1 = require("./chatList.tmpl");
 
-var _user = _interopRequireDefault(require("../../../static/img/user.png"));
+var Block_1 = require("../../modules/Block");
 
-var _user2 = _interopRequireDefault(require("../../../static/img/user2.png"));
+var user_png_1 = __importDefault(require("../../../static/img/user.png"));
 
-var _user3 = _interopRequireDefault(require("../../../static/img/user3.png"));
+var user2_png_1 = __importDefault(require("../../../static/img/user2.png"));
 
-var _user4 = _interopRequireDefault(require("../../../static/img/user4.png"));
+var user3_png_1 = __importDefault(require("../../../static/img/user3.png"));
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var user4_png_1 = __importDefault(require("../../../static/img/user4.png"));
 
 var chatListOptions = {
   list: [{
     user: {
       firstname: 'Андрей',
       lastname: '',
-      avatar: _user.default
+      avatar: user_png_1.default
     },
     link: 'message.html?id=4',
     time: '10:49',
@@ -10362,7 +10993,7 @@ var chatListOptions = {
     user: {
       firstname: 'Виктор',
       lastname: '',
-      avatar: _user2.default
+      avatar: user2_png_1.default
     },
     link: 'message.html?id=3',
     time: 'Вчера',
@@ -10371,7 +11002,7 @@ var chatListOptions = {
     user: {
       firstname: 'Российские железные дороги (ОАО "РЖД")',
       lastname: '',
-      avatar: _user3.default
+      avatar: user3_png_1.default
     },
     link: 'message.html?id=2',
     time: '15 марта',
@@ -10380,62 +11011,105 @@ var chatListOptions = {
     user: {
       firstname: 'Citilink | Ситилинк',
       lastname: '',
-      avatar: _user4.default
+      avatar: user4_png_1.default
     },
     link: 'message.html?id=1',
     time: '11 ноября 2020',
     lastmessage: 'V0879713 на сумму 79990р Самовывоз с 15.11 после 18:00 по 18.11'
   }]
 };
-exports.chatListOptions = chatListOptions;
-var chatList = (0, _templator.compileTemplate)(_chatList.chatListTmpl);
-exports.chatList = chatList;
-},{"../../modules/templator":"../src/modules/templator.js","./chatList.tmpl":"../src/components/chatList/chatList.tmpl.js","../../../static/img/user.png":"img/user.png","../../../static/img/user2.png":"img/user2.png","../../../static/img/user3.png":"img/user3.png","../../../static/img/user4.png":"img/user4.png"}],"../src/components/chatList/index.js":[function(require,module,exports) {
+
+var ChatList = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(ChatList, _Block_1$Block);
+
+  var _super = _createSuper(ChatList);
+
+  function ChatList(props, tmpl) {
+    _classCallCheck(this, ChatList);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(ChatList, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return ChatList;
+}(Block_1.Block);
+
+exports.chatList = new ChatList(chatListOptions, chatList_tmpl_1.chatListTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","./chatList.tmpl":"../src/components/chatList/chatList.tmpl.ts","../../modules/Block":"../src/modules/Block/index.ts","../../../static/img/user.png":"img/user.png","../../../static/img/user2.png":"img/user2.png","../../../static/img/user3.png":"img/user3.png","../../../static/img/user4.png":"img/user4.png"}],"../src/components/chatList/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "chatListOptions", {
-  enumerable: true,
-  get: function () {
-    return _chatList.chatListOptions;
-  }
-});
+exports.chatList = void 0;
+
+var chatList_1 = require("./chatList");
+
 Object.defineProperty(exports, "chatList", {
   enumerable: true,
-  get: function () {
-    return _chatList.chatList;
+  get: function get() {
+    return chatList_1.chatList;
   }
 });
-
-var _chatList = require("./chatList");
-},{"./chatList":"../src/components/chatList/chatList.js"}],"../src/components/chatMessage/chatMessage.tmpl.js":[function(require,module,exports) {
+},{"./chatList":"../src/components/chatList/chatList.ts"}],"../src/components/chatMessage/chatMessage.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chatMessageTmpl = void 0;
-var chatMessageTmpl = "\n<div class=\"chat__communication\">\n  <ul class=\"chat__intervals\">\n    {{#each intervals}}\n      <li class=\"chat__interval\">\n        <p class=\"chat__time\">{{this.date}}</p>\n        <ul class=\"chat__messages\">\n          {{#each this.messages}}\n            <li class=\"chat_message\">\n              <img class=\"profile__ava\" src=\"{{this.avatar}}\" alt=\"{{this.firstname}}\">\n              <div class=\"chat__info\">\n                <div class=\"chat__user\">\n                  <p class=\"chat__name\">{{this.firstname}} {{this.lastname}}</p>\n                  <p class=\"chat__clock\">{{this.time}}</p>\n                </div>\n                <p class=\"chat__text\">{{this.text}}</p>\n              </div>\n            </li>\n          {{/each}}\n        </ul>\n      </li>\n    {{/each}}\n  </ul>\n</div>\n";
-exports.chatMessageTmpl = chatMessageTmpl;
-},{}],"../src/components/chatMessage/chatMessage.js":[function(require,module,exports) {
+exports.chatMessageTmpl = "\n<div class=\"chat__communication\">\n  <ul class=\"chat__intervals\">\n    {{#each intervals}}\n      <li class=\"chat__interval\">\n        <p class=\"chat__time\">{{this.date}}</p>\n        <ul class=\"chat__messages\">\n          {{#each this.messages}}\n            <li class=\"chat_message\">\n              <img class=\"profile__ava\" src=\"{{this.avatar}}\" alt=\"{{this.firstname}}\">\n              <div class=\"chat__info\">\n                <div class=\"chat__user\">\n                  <p class=\"chat__name\">{{this.firstname}} {{this.lastname}}</p>\n                  <p class=\"chat__clock\">{{this.time}}</p>\n                </div>\n                <p class=\"chat__text\">{{this.text}}</p>\n              </div>\n            </li>\n          {{/each}}\n        </ul>\n      </li>\n    {{/each}}\n  </ul>\n</div>\n";
+},{}],"../src/components/chatMessage/chatMessage.ts":[function(require,module,exports) {
 "use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.chatMessage = exports.chatMessageOptions = void 0;
 
-var _templator = require("../../modules/templator");
+var Handlebars_1 = require("../../utils/Handlebars");
 
-var _chatMessage = require("./chatMessage.tmpl");
+var chatMessage_tmpl_1 = require("./chatMessage.tmpl");
 
-var _user = _interopRequireDefault(require("../../../static/img/user2.png"));
+var Block_1 = require("../../modules/Block");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var user2_png_1 = __importDefault(require("../../../static/img/user2.png"));
 
-var chatMessageOptions = {
+exports.chatMessageOptions = {
   intervals: [{
     date: 'Вчера',
     messages: [{
@@ -10448,7 +11122,7 @@ var chatMessageOptions = {
       time: '12:01',
       firstname: 'Виктор',
       lastname: '',
-      avatar: _user.default,
+      avatar: user2_png_1.default,
       text: 'Привет, хорошо.'
     }, {
       time: '12:01',
@@ -10460,50 +11134,129 @@ var chatMessageOptions = {
       time: '12:05',
       firstname: 'Виктор',
       lastname: '',
-      avatar: _user.default,
+      avatar: user2_png_1.default,
       text: 'угар))'
     }, {
       time: '12:05',
       firstname: 'Виктор',
       lastname: '',
-      avatar: _user.default,
+      avatar: user2_png_1.default,
       text: 'репчик кстати нормально зачитал)())))'
     }]
   }]
 };
-exports.chatMessageOptions = chatMessageOptions;
-var chatMessage = (0, _templator.compileTemplate)(_chatMessage.chatMessageTmpl);
-exports.chatMessage = chatMessage;
-},{"../../modules/templator":"../src/modules/templator.js","./chatMessage.tmpl":"../src/components/chatMessage/chatMessage.tmpl.js","../../../static/img/user2.png":"img/user2.png"}],"../src/components/chatMessage/index.js":[function(require,module,exports) {
+
+var ChatMessage = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(ChatMessage, _Block_1$Block);
+
+  var _super = _createSuper(ChatMessage);
+
+  function ChatMessage(props, tmpl) {
+    _classCallCheck(this, ChatMessage);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(ChatMessage, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return ChatMessage;
+}(Block_1.Block);
+
+exports.chatMessage = new ChatMessage(exports.chatMessageOptions, chatMessage_tmpl_1.chatMessageTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","./chatMessage.tmpl":"../src/components/chatMessage/chatMessage.tmpl.ts","../../modules/Block":"../src/modules/Block/index.ts","../../../static/img/user2.png":"img/user2.png"}],"../src/components/chatMessage/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.chatMessage = exports.chatMessageOptions = void 0;
+
+var chatMessage_1 = require("./chatMessage");
+
 Object.defineProperty(exports, "chatMessageOptions", {
   enumerable: true,
-  get: function () {
-    return _chatMessage.chatMessageOptions;
+  get: function get() {
+    return chatMessage_1.chatMessageOptions;
   }
 });
 Object.defineProperty(exports, "chatMessage", {
   enumerable: true,
-  get: function () {
-    return _chatMessage.chatMessage;
+  get: function get() {
+    return chatMessage_1.chatMessage;
   }
 });
-
-var _chatMessage = require("./chatMessage");
-},{"./chatMessage":"../src/components/chatMessage/chatMessage.js"}],"../src/block/message/message.tmpl.js":[function(require,module,exports) {
+},{"./chatMessage":"../src/components/chatMessage/chatMessage.ts"}],"../src/block/message/message.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.messageTmpl = void 0;
-var messageTmpl = "\n<form class=\"message\">\n  <button class=\"message__file\" type=\"button\"></button>\n  <input class=\"message__input\" type=\"text\" placeholder=\"\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435\">\n  <button class=\"message__send\" type=\"button\"></button>\n</form>";
-exports.messageTmpl = messageTmpl;
-},{}],"../src/block/message/message.js":[function(require,module,exports) {
+exports.messageTmpl = "\n<form class=\"message\">\n  <button class=\"message__file\" type=\"button\"></button>\n  <input class=\"message__input\" type=\"text\" placeholder=\"\u0421\u043E\u043E\u0431\u0449\u0435\u043D\u0438\u0435\">\n  <button class=\"message__send\" type=\"button\"></button>\n</form>";
+},{}],"../src/block/message/message.ts":[function(require,module,exports) {
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.message = void 0;
+
+var Handlebars_1 = require("../../utils/Handlebars");
+
+var Block_1 = require("../../modules/Block");
+
+var message_tmpl_1 = require("./message.tmpl");
+
+var Message = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(Message, _Block_1$Block);
+
+  var _super = _createSuper(Message);
+
+  function Message(props, tmpl) {
+    _classCallCheck(this, Message);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(Message, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return Message;
+}(Block_1.Block);
+
+exports.message = new Message({}, message_tmpl_1.messageTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","../../modules/Block":"../src/modules/Block/index.ts","./message.tmpl":"../src/block/message/message.tmpl.ts"}],"../src/block/message/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10511,27 +11264,89 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.message = void 0;
 
-var _templator = require("../../modules/templator");
+var message_1 = require("./message");
 
-var _message = require("./message.tmpl");
-
-var message = (0, _templator.compileTemplate)(_message.messageTmpl);
-exports.message = message;
-},{"../../modules/templator":"../src/modules/templator.js","./message.tmpl":"../src/block/message/message.tmpl.js"}],"../src/block/message/index.js":[function(require,module,exports) {
+Object.defineProperty(exports, "message", {
+  enumerable: true,
+  get: function get() {
+    return message_1.message;
+  }
+});
+},{"./message":"../src/block/message/message.ts"}],"../src/block/chat/chat.ts":[function(require,module,exports) {
 "use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "message", {
-  enumerable: true,
-  get: function () {
-    return _message.message;
-  }
-});
+exports.chat = exports.chatOptions = void 0;
 
-var _message = require("./message");
-},{"./message":"../src/block/message/message.js"}],"../src/block/chat/chat.js":[function(require,module,exports) {
+var Handlebars_1 = require("../../utils/Handlebars");
+
+var chat_tmpl_1 = require("./chat.tmpl");
+
+var chatNav_1 = require("../../components/chatNav");
+
+var chatList_1 = require("../../components/chatList");
+
+var chatMessage_1 = require("../../components/chatMessage");
+
+var message_1 = require("../message");
+
+var Block_1 = require("../../modules/Block");
+
+var isChatList_1 = require("../../utils/isChatList/isChatList");
+
+exports.chatOptions = {
+  navigation: chatNav_1.chatNav.getContent(),
+  main: isChatList_1.isChatList() ? chatList_1.chatList.getContent() : chatMessage_1.chatMessage.getContent(),
+  message: isChatList_1.isChatList() ? '' : message_1.message.getContent()
+};
+
+var Chat = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(Chat, _Block_1$Block);
+
+  var _super = _createSuper(Chat);
+
+  function Chat(props, tmpl) {
+    _classCallCheck(this, Chat);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(Chat, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return Chat;
+}(Block_1.Block);
+
+exports.chat = new Chat(exports.chatOptions, chat_tmpl_1.chatTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","./chat.tmpl":"../src/block/chat/chat.tmpl.ts","../../components/chatNav":"../src/components/chatNav/index.ts","../../components/chatList":"../src/components/chatList/index.ts","../../components/chatMessage":"../src/components/chatMessage/index.ts","../message":"../src/block/message/index.ts","../../modules/Block":"../src/modules/Block/index.ts","../../utils/isChatList/isChatList":"../src/utils/isChatList/isChatList.ts"}],"../src/block/chat/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10539,59 +11354,38 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.chat = exports.chatOptions = void 0;
 
-var _templator = require("../../modules/templator");
+var chat_1 = require("./chat");
 
-var _chat = require("./chat.tmpl");
-
-var _chatNav = require("../../components/chatNav");
-
-var _chatList = require("../../components/chatList");
-
-var _chatMessage = require("../../components/chatMessage");
-
-var _message = require("../message");
-
-var _isChatList = _interopRequireDefault(require("../../utils/isChatList"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var chatOptions = {
-  navigation: (0, _chatNav.chatNav)(_chatNav.chatNavOptions),
-  main: (0, _isChatList.default)() ? (0, _chatList.chatList)(_chatList.chatListOptions) : (0, _chatMessage.chatMessage)(_chatMessage.chatMessageOptions),
-  message: (0, _isChatList.default)() ? '' : (0, _message.message)({})
-};
-exports.chatOptions = chatOptions;
-var chat = (0, _templator.compileTemplate)(_chat.chatTmpl);
-exports.chat = chat;
-},{"../../modules/templator":"../src/modules/templator.js","./chat.tmpl":"../src/block/chat/chat.tmpl.js","../../components/chatNav":"../src/components/chatNav/index.js","../../components/chatList":"../src/components/chatList/index.js","../../components/chatMessage":"../src/components/chatMessage/index.js","../message":"../src/block/message/index.js","../../utils/isChatList":"../src/utils/isChatList.js"}],"../src/block/chat/index.js":[function(require,module,exports) {
+Object.defineProperty(exports, "chatOptions", {
+  enumerable: true,
+  get: function get() {
+    return chat_1.chatOptions;
+  }
+});
+Object.defineProperty(exports, "chat", {
+  enumerable: true,
+  get: function get() {
+    return chat_1.chat;
+  }
+});
+},{"./chat":"../src/block/chat/chat.ts"}],"../src/pages/message.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "chatOptions", {
-  enumerable: true,
-  get: function () {
-    return _chat.chatOptions;
-  }
-});
-Object.defineProperty(exports, "chat", {
-  enumerable: true,
-  get: function () {
-    return _chat.chat;
-  }
-});
 
-var _chat = require("./chat");
-},{"./chat":"../src/block/chat/chat.js"}],"../src/pages/index.js":[function(require,module,exports) {
-"use strict";
+var header_1 = require("../block/header");
 
-var _header = require("../block/header");
+var chat_1 = require("../block/chat");
 
-var _chat = require("../block/chat");
+function render(query) {
+  var root = document.querySelector(query);
+  root.innerHTML = "\n    ".concat(header_1.header.getContent(), "\n    ").concat(chat_1.chat.getContent());
+}
 
-document.getElementById("root").innerHTML = "\n  ".concat((0, _header.header)(_header.headerOptions), "\n  ").concat((0, _chat.chat)(_chat.chatOptions));
-},{"../block/header":"../src/block/header/index.js","../block/chat":"../src/block/chat/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+render("#root");
+},{"../block/header":"../src/block/header/index.ts","../block/chat":"../src/block/chat/index.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -10619,7 +11413,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52371" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62992" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -10795,5 +11589,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../src/pages/index.js"], null)
-//# sourceMappingURL=/pages.482872b4.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../src/pages/message.ts"], null)
+//# sourceMappingURL=/message.4662f9df.js.map

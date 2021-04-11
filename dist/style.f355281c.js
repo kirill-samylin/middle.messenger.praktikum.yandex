@@ -219,12 +219,12 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./..\\..\\..\\static\\img\\icons\\back.svg":[["back.2d266d64.svg","img/icons/back.svg"],"img/icons/back.svg"],"./..\\..\\..\\static\\img\\icons\\insert.svg":[["insert.2a4091d1.svg","img/icons/insert.svg"],"img/icons/insert.svg"],"./..\\..\\..\\static\\img\\icons\\delete.svg":[["delete.5e24d1a3.svg","img/icons/delete.svg"],"img/icons/delete.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/chatNav/chatNav.css":[function(require,module,exports) {
+},{"./../../../static/img/icons/back.svg":[["back.2d266d64.svg","img/icons/back.svg"],"img/icons/back.svg"],"./../../../static/img/icons/insert.svg":[["insert.2a4091d1.svg","img/icons/insert.svg"],"img/icons/insert.svg"],"./../../../static/img/icons/delete.svg":[["delete.5e24d1a3.svg","img/icons/delete.svg"],"img/icons/delete.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/chatNav/chatNav.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./..\\..\\..\\static\\img\\icons\\search.svg":[["search.3530624f.svg","img/icons/search.svg"],"img/icons/search.svg"],"./..\\..\\..\\static\\img\\icons\\plus.svg":[["plus.963d7d5a.svg","img/icons/plus.svg"],"img/icons/plus.svg"],"./..\\..\\..\\static\\img\\icons\\edit.svg":[["edit.a5df4844.svg","img/icons/edit.svg"],"img/icons/edit.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/chatList/chatList.css":[function(require,module,exports) {
+},{"./../../../static/img/icons/search.svg":[["search.3530624f.svg","img/icons/search.svg"],"img/icons/search.svg"],"./../../../static/img/icons/plus.svg":[["plus.963d7d5a.svg","img/icons/plus.svg"],"img/icons/plus.svg"],"./../../../static/img/icons/edit.svg":[["edit.a5df4844.svg","img/icons/edit.svg"],"img/icons/edit.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../src/components/chatList/chatList.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -239,7 +239,7 @@ var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
 module.hot.accept(reloadCSS);
-},{"./..\\..\\..\\static\\img\\icons\\file.svg":[["file.f767acfa.svg","img/icons/file.svg"],"img/icons/file.svg"],"./..\\..\\..\\static\\img\\icons\\arrow.svg":[["arrow.703be1a8.svg","img/icons/arrow.svg"],"img/icons/arrow.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"style/index.css":[function(require,module,exports) {
+},{"./../../../static/img/icons/file.svg":[["file.f767acfa.svg","img/icons/file.svg"],"img/icons/file.svg"],"./../../../static/img/icons/arrow.svg":[["arrow.703be1a8.svg","img/icons/arrow.svg"],"img/icons/arrow.svg"],"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"style/index.css":[function(require,module,exports) {
 var reloadCSS = require('_css_loader');
 
 module.hot.dispose(reloadCSS);
@@ -272,7 +272,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52371" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62992" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

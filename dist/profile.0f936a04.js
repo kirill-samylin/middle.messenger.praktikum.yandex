@@ -10110,192 +10110,792 @@ if (typeof require !== 'undefined' && require.extensions) {
   require.extensions['.handlebars'] = extension;
   require.extensions['.hbs'] = extension;
 }
-},{"../dist/cjs/handlebars":"../node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"../node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","fs":"../node_modules/parcel-bundler/src/builtins/_empty.js"}],"../src/modules/templator.js":[function(require,module,exports) {
+},{"../dist/cjs/handlebars":"../node_modules/handlebars/dist/cjs/handlebars.js","../dist/cjs/handlebars/compiler/printer":"../node_modules/handlebars/dist/cjs/handlebars/compiler/printer.js","fs":"../node_modules/parcel-bundler/src/builtins/_empty.js"}],"../src/utils/Handlebars/Handlebars.ts":[function(require,module,exports) {
 "use strict";
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.compileTemplate = compileTemplate;
+exports.compileTemplate = void 0;
 
-var _handlebars = _interopRequireDefault(require("handlebars"));
+var handlebars_1 = __importDefault(require("handlebars")); // interface IObj {
+//   tag: string | undefined
+//   name: string
+//   fn?: Function
+//   text?: string
+// }
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function compileTemplate() {
   var templateString = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-  return _handlebars.default.compile(templateString);
+  return handlebars_1.default.compile(templateString);
 }
 
-function createElement(obj) {
-  console.log(obj);
-  var element = document.createElement(obj.tag || 'div');
+exports.compileTemplate = compileTemplate; // function createElement(obj: IObj) {
+//   const element: HTMLElement = document.createElement(obj.tag || 'div');
+//   for (let key in obj) {
+//     if (key!=='tag') {
+//       if (key==='text') {
+//         element.textContent = obj[key];
+//       } else if (key==='event') {
+//         element.addEventListener(obj[key].name, obj[key].fn);
+//       } else {
+//         element.setAttribute(key, obj[key]);
+//       }
+//     }
+//   }
+//   return new Handlebars.SafeString(element.outerHTML);
+// }
+// Handlebars.registerHelper('element', function(item: IObj) {
+//   if (!item) return undefined
+//   return createElement(item)
+// });
+// Handlebars.registerHelper('elements', function(items: IObj[]) {
+//   if (!items) return undefined
+//   const elements = items.map((item) => createElement(item));
+//   return elements.join("");
+// });
+// Handlebars.registerHelper('stringifyFunc', function(fn: Function) {
+//   return new Handlebars.SafeString(`(${fn.toString().replace(/\"/g,"'")})()`);
+// });
+},{"handlebars":"../node_modules/handlebars/lib/index.js"}],"../src/utils/Handlebars/index.ts":[function(require,module,exports) {
+"use strict";
 
-  for (var key in obj) {
-    if (key !== 'tag') {
-      if (key === 'text') {
-        element.textContent = obj[key];
-      } else if (key === 'event') {
-        element.addEventListener(obj[key].name, obj[key].fn);
-      } else {
-        element.setAttribute(key, obj[key]);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.compileTemplate = void 0;
+
+var Handlebars_1 = require("./Handlebars");
+
+Object.defineProperty(exports, "compileTemplate", {
+  enumerable: true,
+  get: function get() {
+    return Handlebars_1.compileTemplate;
+  }
+});
+},{"./Handlebars":"../src/utils/Handlebars/Handlebars.ts"}],"../src/modules/EventBus/EventBus.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.EventBus = void 0;
+
+var EventBus = /*#__PURE__*/function () {
+  function EventBus() {
+    _classCallCheck(this, EventBus);
+
+    this.listeners = {};
+  }
+
+  _createClass(EventBus, [{
+    key: "checkExistenceEvent",
+    value: function checkExistenceEvent(event) {
+      if (!this.listeners[event]) {
+        throw new Error("\u041D\u0435\u0442 \u0441\u043E\u0431\u044B\u0442\u0438\u044F: ".concat(event));
       }
     }
-  }
+  }, {
+    key: "on",
+    value: function on(event, callback) {
+      if (!this.listeners[event]) {
+        this.listeners[event] = [];
+      }
 
-  return new _handlebars.default.SafeString(element.outerHTML);
+      this.listeners[event].push(callback);
+    }
+  }, {
+    key: "off",
+    value: function off(event, callback) {
+      this.checkExistenceEvent(event);
+      this.listeners[event] = this.listeners[event].filter(function (listener) {
+        return listener !== callback;
+      });
+    }
+  }, {
+    key: "emit",
+    value: function emit(event) {
+      for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        args[_key - 1] = arguments[_key];
+      }
+
+      this.checkExistenceEvent(event);
+      this.listeners[event].forEach(function (listener) {
+        listener.apply(void 0, args);
+      });
+    }
+  }]);
+
+  return EventBus;
+}();
+
+exports.EventBus = EventBus;
+},{}],"../node_modules/uuid/lib/rng-browser.js":[function(require,module,exports) {
+// Unique ID creation requires a high quality random # generator.  In the
+// browser this is a little complicated due to unknown quality of Math.random()
+// and inconsistent support for the `crypto` API.  We do the best we can via
+// feature-detection
+
+// getRandomValues needs to be invoked in a context where "this" is a Crypto
+// implementation. Also, find the complete implementation of crypto on IE11.
+var getRandomValues = (typeof(crypto) != 'undefined' && crypto.getRandomValues && crypto.getRandomValues.bind(crypto)) ||
+                      (typeof(msCrypto) != 'undefined' && typeof window.msCrypto.getRandomValues == 'function' && msCrypto.getRandomValues.bind(msCrypto));
+
+if (getRandomValues) {
+  // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+  var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+
+  module.exports = function whatwgRNG() {
+    getRandomValues(rnds8);
+    return rnds8;
+  };
+} else {
+  // Math.random()-based (RNG)
+  //
+  // If all else fails, use Math.random().  It's fast, but is of unspecified
+  // quality.
+  var rnds = new Array(16);
+
+  module.exports = function mathRNG() {
+    for (var i = 0, r; i < 16; i++) {
+      if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+      rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+    }
+
+    return rnds;
+  };
 }
 
-_handlebars.default.registerHelper('element', function (item) {
-  if (!item) return undefined;
-  return createElement(item);
-});
-
-_handlebars.default.registerHelper('elements', function (items) {
-  if (!items) return undefined;
-  var elements = items.map(function (item) {
-    return createElement(item);
-  });
-  return elements.join("");
-});
-
-_handlebars.default.registerHelper('stringifyFunc', function (fn) {
-  return new _handlebars.default.SafeString("(".concat(fn.toString().replace(/\"/g, "'"), ")()"));
-});
-},{"handlebars":"../node_modules/handlebars/lib/index.js"}],"../src/block/popup/popup.tmpl.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.signInTmpl = exports.signUpTmpl = void 0;
-var signUpTmpl = "\n<div class=\"popup\" id=\"regisration\">\n  <form class=\"popup__form\">\n    <h2 class=\"popup__title\">{{title}}</h2>\n    <ul class=\"popup__fields\">\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"email\">\u041F\u043E\u0447\u0442\u0430</label>\n          <input id=\"email\" class=\"popup__input\" type=\"email\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043F\u043E\u0447\u0442\u0443\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"login\">\u041B\u043E\u0433\u0438\u043D</label>\n          <input id=\"login\" class=\"popup__input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043B\u043E\u0433\u0438\u043D\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"name\">\u0418\u043C\u044F</label>\n          <input id=\"name\" class=\"popup__input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0438\u043C\u044F\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"lastname\">\u0424\u0430\u043C\u0438\u043B\u0438\u044F</label>\n          <input id=\"lastname\" class=\"popup__input\" type=\"text\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0444\u0430\u043C\u0438\u043B\u0438\u044E\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"tel\">\u0422\u0435\u043B\u0435\u0444\u043E\u043D</label>\n          <input id=\"tel\" class=\"popup__input\" type=\"tel\" placeholder=\"+7 (909) 967 30 30\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"password\">\u041F\u0430\u0440\u043E\u043B\u044C</label>\n          <input id=\"password\" class=\"popup__input\" type=\"password\" placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C\">\n        </li>\n        <li class=\"popup__field\">\n          <label class=\"popup__label\" for=\"passwordend\">\u041F\u0430\u0440\u043E\u043B\u044C (\u0435\u0449\u0451 \u0440\u0430\u0437)</label>\n          <input id=\"passwordend\" class=\"popup__input\" type=\"password\" placeholder=\"\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0438\u0442\u0435 \u043F\u0430\u0440\u043E\u043B\u044C\">\n        </li>\n      </ul>\n    <span class=\"popup__error {{errorclass}}\">{{error}}</span>\n    <button onclick=\"{{stringifyFunc submit}}\" class=\"popup__button\" type=\"button\">{{button}}</button>\n    <a class=\"popup__link\" href=\"{{url}}\">{{link}}</a>\n  </form>\n</div>";
-exports.signUpTmpl = signUpTmpl;
-var signInTmpl = "\n<div class=\"popup\" id=\"auth\">\n  <form class=\"popup__form\">\n    <h2 class=\"popup__title\">{{title}}</h2>\n    <input id=\"login\" class=\"input\" type=\"text\" placeholder=\"\u041B\u043E\u0433\u0438\u043D\">\n    <input id=\"password\" class=\"input\" type=\"text\" placeholder=\"\u041F\u0430\u0440\u043E\u043B\u044C\">\n    <span class=\"popup__error {{errorclass}}\">{{error}}</span>\n    <button onclick=\"{{stringifyFunc submit}}\" class=\"popup__button\" type=\"button\">{{button}}</button>\n    <a class=\"popup__link\" href=\"{{url}}\">{{link}}</a>\n  </form>\n</div>";
-exports.signInTmpl = signInTmpl;
-},{}],"../src/block/popup/popup.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.signIn = exports.signUp = exports.signInOptions = exports.signUpOptions = void 0;
-
-var _templator = require("../../modules/templator");
-
-var _popup = require("./popup.tmpl");
-
-function handleSignUp() {
-  var form = document.querySelector('#regisration');
-  var first_name = form.querySelector('#name').value;
-  var second_name = form.querySelector('#lastname').value;
-  var phone = form.querySelector('#tel').value;
-  var email = form.querySelector('#email').value;
-  var login = form.querySelector('#login').value;
-  var password = form.querySelector('#password').value;
-  var passwordend = form.querySelector('#passwordend').value;
-  console.log({
-    first_name: first_name,
-    second_name: second_name,
-    phone: phone,
-    email: email,
-    login: login,
-    password: password,
-    passwordend: passwordend
-  });
+},{}],"../node_modules/uuid/lib/bytesToUuid.js":[function(require,module,exports) {
+/**
+ * Convert array of 16 byte values to UUID string format of the form:
+ * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+ */
+var byteToHex = [];
+for (var i = 0; i < 256; ++i) {
+  byteToHex[i] = (i + 0x100).toString(16).substr(1);
 }
 
-function handleSignIn() {
-  var form = document.querySelector('#auth');
-  var login = form.querySelector('#login').value;
-  var password = form.querySelector('#password').value;
-  console.log({
-    login: login,
-    password: password
-  });
+function bytesToUuid(buf, offset) {
+  var i = offset || 0;
+  var bth = byteToHex;
+  // join used to fix memory issue caused by concatenation: https://bugs.chromium.org/p/v8/issues/detail?id=3175#c4
+  return ([
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]], '-',
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]],
+    bth[buf[i++]], bth[buf[i++]]
+  ]).join('');
 }
 
-var signUpOptions = {
-  title: 'Регистрация',
-  link: 'Войти',
-  url: 'index.html',
-  error: 'Пароли не совпадают',
-  button: 'Зарегистрироваться',
-  submit: handleSignUp,
-  buttontest: {
-    tag: 'button',
-    text: 'Зарегистрироваться',
-    class: 'popup__button',
-    type: 'button',
-    event: {
-      name: 'click',
-      fn: handleSignUp
+module.exports = bytesToUuid;
+
+},{}],"../node_modules/uuid/v1.js":[function(require,module,exports) {
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
+// **`v1()` - Generate time-based UUID**
+//
+// Inspired by https://github.com/LiosK/UUID.js
+// and http://docs.python.org/library/uuid.html
+
+var _nodeId;
+var _clockseq;
+
+// Previous uuid creation time
+var _lastMSecs = 0;
+var _lastNSecs = 0;
+
+// See https://github.com/uuidjs/uuid for API details
+function v1(options, buf, offset) {
+  var i = buf && offset || 0;
+  var b = buf || [];
+
+  options = options || {};
+  var node = options.node || _nodeId;
+  var clockseq = options.clockseq !== undefined ? options.clockseq : _clockseq;
+
+  // node and clockseq need to be initialized to random values if they're not
+  // specified.  We do this lazily to minimize issues related to insufficient
+  // system entropy.  See #189
+  if (node == null || clockseq == null) {
+    var seedBytes = rng();
+    if (node == null) {
+      // Per 4.5, create and 48-bit node id, (47 random bits + multicast bit = 1)
+      node = _nodeId = [
+        seedBytes[0] | 0x01,
+        seedBytes[1], seedBytes[2], seedBytes[3], seedBytes[4], seedBytes[5]
+      ];
+    }
+    if (clockseq == null) {
+      // Per 4.2.2, randomize (14 bit) clockseq
+      clockseq = _clockseq = (seedBytes[6] << 8 | seedBytes[7]) & 0x3fff;
     }
   }
-};
-exports.signUpOptions = signUpOptions;
-var signInOptions = {
-  title: 'Вход',
-  link: 'Регистрация',
-  url: 'registration.html',
-  error: 'Не правельный логин или пароль',
-  button: 'Авторизоваться',
-  submit: handleSignIn,
-  buttontest: {
-    tag: 'button',
-    text: 'Авторизоваться',
-    class: 'popup__button',
-    type: 'button',
-    event: {
-      name: 'click',
-      fn: handleSignIn
+
+  // UUID timestamps are 100 nano-second units since the Gregorian epoch,
+  // (1582-10-15 00:00).  JSNumbers aren't precise enough for this, so
+  // time is handled internally as 'msecs' (integer milliseconds) and 'nsecs'
+  // (100-nanoseconds offset from msecs) since unix epoch, 1970-01-01 00:00.
+  var msecs = options.msecs !== undefined ? options.msecs : new Date().getTime();
+
+  // Per 4.2.1.2, use count of uuid's generated during the current clock
+  // cycle to simulate higher resolution clock
+  var nsecs = options.nsecs !== undefined ? options.nsecs : _lastNSecs + 1;
+
+  // Time since last uuid creation (in msecs)
+  var dt = (msecs - _lastMSecs) + (nsecs - _lastNSecs)/10000;
+
+  // Per 4.2.1.2, Bump clockseq on clock regression
+  if (dt < 0 && options.clockseq === undefined) {
+    clockseq = clockseq + 1 & 0x3fff;
+  }
+
+  // Reset nsecs if clock regresses (new clockseq) or we've moved onto a new
+  // time interval
+  if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === undefined) {
+    nsecs = 0;
+  }
+
+  // Per 4.2.1.2 Throw error if too many uuids are requested
+  if (nsecs >= 10000) {
+    throw new Error('uuid.v1(): Can\'t create more than 10M uuids/sec');
+  }
+
+  _lastMSecs = msecs;
+  _lastNSecs = nsecs;
+  _clockseq = clockseq;
+
+  // Per 4.1.4 - Convert from unix epoch to Gregorian epoch
+  msecs += 12219292800000;
+
+  // `time_low`
+  var tl = ((msecs & 0xfffffff) * 10000 + nsecs) % 0x100000000;
+  b[i++] = tl >>> 24 & 0xff;
+  b[i++] = tl >>> 16 & 0xff;
+  b[i++] = tl >>> 8 & 0xff;
+  b[i++] = tl & 0xff;
+
+  // `time_mid`
+  var tmh = (msecs / 0x100000000 * 10000) & 0xfffffff;
+  b[i++] = tmh >>> 8 & 0xff;
+  b[i++] = tmh & 0xff;
+
+  // `time_high_and_version`
+  b[i++] = tmh >>> 24 & 0xf | 0x10; // include version
+  b[i++] = tmh >>> 16 & 0xff;
+
+  // `clock_seq_hi_and_reserved` (Per 4.2.2 - include variant)
+  b[i++] = clockseq >>> 8 | 0x80;
+
+  // `clock_seq_low`
+  b[i++] = clockseq & 0xff;
+
+  // `node`
+  for (var n = 0; n < 6; ++n) {
+    b[i + n] = node[n];
+  }
+
+  return buf ? buf : bytesToUuid(b);
+}
+
+module.exports = v1;
+
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"../node_modules/uuid/v4.js":[function(require,module,exports) {
+var rng = require('./lib/rng');
+var bytesToUuid = require('./lib/bytesToUuid');
+
+function v4(options, buf, offset) {
+  var i = buf && offset || 0;
+
+  if (typeof(options) == 'string') {
+    buf = options === 'binary' ? new Array(16) : null;
+    options = null;
+  }
+  options = options || {};
+
+  var rnds = options.random || (options.rng || rng)();
+
+  // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+  rnds[6] = (rnds[6] & 0x0f) | 0x40;
+  rnds[8] = (rnds[8] & 0x3f) | 0x80;
+
+  // Copy bytes to buffer, if provided
+  if (buf) {
+    for (var ii = 0; ii < 16; ++ii) {
+      buf[i + ii] = rnds[ii];
     }
   }
-};
-exports.signInOptions = signInOptions;
-var signUp = (0, _templator.compileTemplate)(_popup.signUpTmpl);
-exports.signUp = signUp;
-var signIn = (0, _templator.compileTemplate)(_popup.signInTmpl);
-exports.signIn = signIn;
-},{"../../modules/templator":"../src/modules/templator.js","./popup.tmpl":"../src/block/popup/popup.tmpl.js"}],"../src/block/popup/index.js":[function(require,module,exports) {
+
+  return buf || bytesToUuid(rnds);
+}
+
+module.exports = v4;
+
+},{"./lib/rng":"../node_modules/uuid/lib/rng-browser.js","./lib/bytesToUuid":"../node_modules/uuid/lib/bytesToUuid.js"}],"../node_modules/uuid/index.js":[function(require,module,exports) {
+var v1 = require('./v1');
+var v4 = require('./v4');
+
+var uuid = v4;
+uuid.v1 = v1;
+uuid.v4 = v4;
+
+module.exports = uuid;
+
+},{"./v1":"../node_modules/uuid/v1.js","./v4":"../node_modules/uuid/v4.js"}],"../src/modules/Block/Block.ts":[function(require,module,exports) {
+"use strict";
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Block = void 0;
+
+var EventBus_1 = require("./../EventBus/EventBus");
+
+var uuid_1 = require("uuid");
+
+var EVENTS;
+
+(function (EVENTS) {
+  EVENTS["INIT"] = "init";
+  EVENTS["FLOW_CDM"] = "flow:component-did-mount";
+  EVENTS["FLOW_RENDER"] = "flow:render";
+  EVENTS["FLOW_CDU"] = "flow:component-did-update";
+})(EVENTS || (EVENTS = {}));
+
+;
+
+var Block = /*#__PURE__*/function () {
+  function Block(props, tmpl) {
+    var _this = this;
+
+    _classCallCheck(this, Block);
+
+    this.setProps = function (nextProps) {
+      if (!nextProps) {
+        return;
+      }
+
+      _this.props = Object.assign(_this.props, nextProps);
+
+      _this.eventBus.emit(EVENTS.FLOW_CDU, _this.props, nextProps);
+    };
+
+    this.shell = null;
+    ;
+    this.eventBus = new EventBus_1.EventBus();
+    this.element = null;
+    this._id = uuid_1.v4();
+    this.tmpl = tmpl || '';
+    this.props = this.makePropsProxy(props);
+    this.registerEvents();
+    this.eventBus.emit(EVENTS.INIT);
+  }
+
+  _createClass(Block, [{
+    key: "registerEvents",
+    value: function registerEvents() {
+      var _this2 = this;
+
+      this.eventBus.on(EVENTS.INIT, this.init.bind(this));
+      this.eventBus.on(EVENTS.FLOW_CDM, this._componentDidMount.bind(this));
+      this.eventBus.on(EVENTS.FLOW_RENDER, this._render.bind(this));
+      this.eventBus.on(EVENTS.FLOW_CDU, function () {
+        var oldProps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var newProps = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+        return _this2._componentDidUpdate(oldProps, newProps);
+      });
+    }
+  }, {
+    key: "_createShell",
+    value: function _createShell() {
+      this.shell = this._createDocumentElement("div");
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this._createShell();
+
+      this.eventBus.emit(EVENTS.FLOW_CDM);
+    }
+  }, {
+    key: "_componentDidMount",
+    value: function _componentDidMount() {
+      this.componentDidMount();
+      this.eventBus.emit(EVENTS.FLOW_RENDER);
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {}
+  }, {
+    key: "_componentDidUpdate",
+    value: function _componentDidUpdate(oldProps, newProps) {
+      var response = this.componentDidUpdate(oldProps, newProps);
+
+      if (response) {
+        this.eventBus.emit(EVENTS.FLOW_RENDER);
+      }
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(oldProps, newProps) {
+      Object.assign(oldProps, newProps);
+      return true;
+    }
+  }, {
+    key: "_addEvents",
+    value: function _addEvents() {
+      var _this3 = this;
+
+      var _this$props$events = this.props.events,
+          events = _this$props$events === void 0 ? [] : _this$props$events; //console.log(document)
+
+      events.forEach(function (event) {
+        var _a;
+
+        var name = event.name,
+            selector = event.selector,
+            cb = event.cb;
+        var element = (_a = _this3.element) === null || _a === void 0 ? void 0 : _a.querySelector(selector);
+
+        if (element) {
+          element.addEventListener(name, cb);
+        }
+      });
+    }
+  }, {
+    key: "_render",
+    value: function _render() {
+      var _a, _b;
+
+      var tempaler = this.render();
+      var element = tempaler(this.props);
+      if (element === null || this.shell === null) return;
+      this.shell.innerHTML = element;
+
+      if (this.element === null) {
+        this.element = this.shell.firstElementChild;
+        (_a = this.element) === null || _a === void 0 ? void 0 : _a.setAttribute('data-id', this._id);
+      } else {
+        (_b = this.element) === null || _b === void 0 ? void 0 : _b.replaceWith(this.shell.firstElementChild);
+      }
+
+      this._addEvents();
+    } // Может переопределять пользователь, необязательно трогать
+
+  }, {
+    key: "render",
+    value: function render() {}
+  }, {
+    key: "getElement",
+    value: function getElement() {
+      return this.element;
+    }
+  }, {
+    key: "getContent",
+    value: function getContent() {
+      var _a;
+
+      return (_a = this.element) === null || _a === void 0 ? void 0 : _a.outerHTML;
+    }
+  }, {
+    key: "makePropsProxy",
+    value: function makePropsProxy(props) {
+      return new Proxy(props, {
+        set: function set(target, prop, value) {
+          if (prop.indexOf('_') !== -1) {
+            throw new Error('нет доступа');
+          }
+
+          target[prop] = value;
+          return true;
+        },
+        deleteProperty: function deleteProperty() {
+          throw new Error('нет доступа');
+        }
+      });
+    }
+  }, {
+    key: "_createDocumentElement",
+    value: function _createDocumentElement() {
+      var tagName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "div";
+      return document.createElement(tagName);
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      this.element.style.display = "block";
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.element.style.display = "none";
+    }
+  }]);
+
+  return Block;
+}();
+
+exports.Block = Block;
+},{"./../EventBus/EventBus":"../src/modules/EventBus/EventBus.ts","uuid":"../node_modules/uuid/index.js"}],"../src/modules/Block/index.ts":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-Object.defineProperty(exports, "signUpOptions", {
-  enumerable: true,
-  get: function () {
-    return _popup.signUpOptions;
-  }
-});
-Object.defineProperty(exports, "signInOptions", {
-  enumerable: true,
-  get: function () {
-    return _popup.signInOptions;
-  }
-});
-Object.defineProperty(exports, "signUp", {
-  enumerable: true,
-  get: function () {
-    return _popup.signUp;
-  }
-});
-Object.defineProperty(exports, "signIn", {
-  enumerable: true,
-  get: function () {
-    return _popup.signIn;
-  }
-});
+exports.Block = void 0;
 
-var _popup = require("./popup");
-},{"./popup":"../src/block/popup/popup.js"}],"../src/pages/auth.js":[function(require,module,exports) {
+var Block_1 = require("./Block");
+
+Object.defineProperty(exports, "Block", {
+  enumerable: true,
+  get: function get() {
+    return Block_1.Block;
+  }
+});
+},{"./Block":"../src/modules/Block/Block.ts"}],"../src/block/header/header.tmpl.ts":[function(require,module,exports) {
 "use strict";
 
-var _popup = require("../block/popup");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.headerTmpl = void 0;
+exports.headerTmpl = "\n<header class=\"header\">\n    <nav class=\"header__menu\">\n      {{#each links}}\n        <a class=\"header__link {{this.active}}\" href=\"{{this.link}}\">{{this.text}}</a>\n      {{/each}}\n    </nav>\n    <div class=\"header__profile\">\n      <p class=\"profile__name\">{{firstname}} {{lastname}}</p>\n      <img class=\"profile__ava\" src=\"{{avatar}}\" alt=\"{{firstname}}\">\n    </div>\n  </header>";
+},{}],"../src/block/header/header.ts":[function(require,module,exports) {
+"use strict";
 
-document.getElementById("root").innerHTML = (0, _popup.signIn)(_popup.signInOptions);
-},{"../block/popup":"../src/block/popup/index.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.header = void 0;
+
+var Handlebars_1 = require("../../utils/Handlebars");
+
+var Block_1 = require("../../modules/Block");
+
+var header_tmpl_1 = require("./header.tmpl");
+
+var linkActive = function linkActive(href) {
+  if ("/".concat(href) === window.location.pathname) {
+    return 'header__link_active';
+  } else {
+    return '';
+  }
+};
+
+var headerOptions = {
+  firstname: 'Кирилл',
+  lastname: 'Самылин',
+  avatar: 'https://igate.com.ua/upload/photo/0001/0001/3383/6955/55.jpg',
+  links: [{
+    active: linkActive('index.html') || linkActive('message.html'),
+    link: 'index.html',
+    text: 'Сообщения'
+  }, {
+    active: linkActive('profile.html'),
+    link: 'profile.html',
+    text: 'Профиль'
+  }, {
+    active: linkActive('auth.html'),
+    link: 'auth.html',
+    text: 'Выход'
+  }]
+};
+
+var Header = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(Header, _Block_1$Block);
+
+  var _super = _createSuper(Header);
+
+  function Header(props, tmpl) {
+    _classCallCheck(this, Header);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(Header, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return Header;
+}(Block_1.Block);
+
+exports.header = new Header(headerOptions, header_tmpl_1.headerTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","../../modules/Block":"../src/modules/Block/index.ts","./header.tmpl":"../src/block/header/header.tmpl.ts"}],"../src/block/header/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.header = void 0;
+
+var header_1 = require("./header");
+
+Object.defineProperty(exports, "header", {
+  enumerable: true,
+  get: function get() {
+    return header_1.header;
+  }
+});
+},{"./header":"../src/block/header/header.ts"}],"../src/block/profile/profile.tmpl.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.profileTmpl = void 0;
+exports.profileTmpl = "\n<section class=\"profile\">\n  <img class=\"profile__avatar\" src=\"{{avatar}}\" alt=\"\">\n  <h1 class=\"profile__title\">{{firstname}} {{lastname}}</h1>\n  <ul class=\"profile__list\">\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u041F\u043E\u0447\u0442\u0430</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{email}}\" disabled>\n    </li>\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u041B\u043E\u0433\u0438\u043D</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{login}}\" disabled>\n    </li>\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u0418\u043C\u044F</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{firstname}}\" disabled>\n    </li>\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u0424\u0430\u043C\u0438\u043B\u0438\u044F</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{lastname}}\" disabled>\n    </li>\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u0418\u043C\u044F \u0432 \u0447\u0430\u0442\u0435</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{firstname}} {{lastname}}\" disabled>\n    </li>\n    <li class=\"profile__item\">\n      <label class=\"profile__label\">\u0422\u0435\u043B\u0435\u0444\u043E\u043D</label>\n      <input class=\"profile__input\" type=\"text\" value=\"{{tel}}\" disabled>\n    </li>\n  </ul>\n  <ul class=\"profile__list\">\n    <li class=\"profile__item\">\n      <a class=\"profile__link\" href=\"#\">\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u0434\u0430\u043D\u043D\u044B\u0435</a>\n    </li>\n    <li class=\"profile__item\">\n      <a class=\"profile__link\" href=\"#\">\u0418\u0437\u043C\u0435\u043D\u0438\u0442\u044C \u043F\u0430\u0440\u043E\u043B\u044C</a>\n    </li>\n  </ul>\n</section>";
+},{}],"../src/block/profile/profile.ts":[function(require,module,exports) {
+"use strict";
+
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.profile = void 0;
+
+var Handlebars_1 = require("../../utils/Handlebars");
+
+var profile_tmpl_1 = require("./profile.tmpl");
+
+var Block_1 = require("../../modules/Block");
+
+var profileOptions = {
+  firstname: 'Кирилл',
+  lastname: 'Самылин',
+  login: 'ivanivanov',
+  avatar: 'https://igate.com.ua/upload/photo/0001/0001/3383/6955/55.jpg',
+  email: 'pochta@yandex.ru',
+  tel: '+7 (909) 967 30 30'
+};
+
+var Profile = /*#__PURE__*/function (_Block_1$Block) {
+  _inherits(Profile, _Block_1$Block);
+
+  var _super = _createSuper(Profile);
+
+  function Profile(props, tmpl) {
+    _classCallCheck(this, Profile);
+
+    return _super.call(this, props, tmpl);
+  }
+
+  _createClass(Profile, [{
+    key: "render",
+    value: function render() {
+      return Handlebars_1.compileTemplate(this.tmpl);
+    }
+  }]);
+
+  return Profile;
+}(Block_1.Block);
+
+exports.profile = new Profile(profileOptions, profile_tmpl_1.profileTmpl);
+},{"../../utils/Handlebars":"../src/utils/Handlebars/index.ts","./profile.tmpl":"../src/block/profile/profile.tmpl.ts","../../modules/Block":"../src/modules/Block/index.ts"}],"../src/block/profile/index.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.profile = void 0;
+
+var profile_1 = require("./profile");
+
+Object.defineProperty(exports, "profile", {
+  enumerable: true,
+  get: function get() {
+    return profile_1.profile;
+  }
+});
+},{"./profile":"../src/block/profile/profile.ts"}],"../src/pages/profile.ts":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var header_1 = require("../block/header");
+
+var profile_1 = require("../block/profile");
+
+function render(query) {
+  var root = document.querySelector(query);
+  root.innerHTML = "\n  ".concat(header_1.header.getContent(), "\n  ").concat(profile_1.profile.getContent());
+}
+
+render("#root");
+},{"../block/header":"../src/block/header/index.ts","../block/profile":"../src/block/profile/index.ts"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -10323,7 +10923,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52371" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62992" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
@@ -10499,5 +11099,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../src/pages/auth.js"], null)
-//# sourceMappingURL=/auth.a6affb6b.js.map
+},{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","../src/pages/profile.ts"], null)
+//# sourceMappingURL=/profile.0f936a04.js.map
