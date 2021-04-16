@@ -1,16 +1,21 @@
 .button {
+  /* Блочная модель */
   width: 280px;
   height: 37px;
-  border-radius: 8px;
-  border: none;
-  outline: none;
-  background-color: #728bd7;
-  margin: 0 auto;
-  color: #fff;
-  cursor: pointer;
   margin-top: 18px;
   margin-bottom: 14px;
+  margin: 0 auto;
+  
+  /* Типографика */
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
+  color: #fff;
+
+  /* Оформление */
+  border-radius: 8px;
+  border: 0;
+  outline: 0;
+  background-color: #728bd7;
+  cursor: pointer;
 }

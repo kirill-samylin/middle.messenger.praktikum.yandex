@@ -1,64 +1,87 @@
 .chat {
+  /* Блочная модель */
   width: 100%;
   height: calc(100% - 60px - 80px);
 }
 
 .chat__menu {
-  list-style: none;
-  background-color: #36393f;
-  margin: 0;
+  /* Позиционирование */
   position: absolute;
   top: 129px;
   right: 112px;
-  border-radius: 12px;
+
+  /* Блочная модель */
   display: flex;
   flex-direction: column;
+  margin: 0;
   padding: 15px 26px 15px 8px;
+  
+  /* Оформление */
   border: 1px solid #72767d;
+  list-style: none;
+  background-color: #36393f;
+  border-radius: 12px;
 }
 
 .chat__action {
+  /* Блочная модель */
   margin-bottom: 12px;
 }
 
 .chat__action:last-child {
+  /* Блочная модель */
   margin-bottom: 0;
 }
 
 .chat__back {
-  font-size: 16px;
-  margin-left: 35px;
-  text-decoration: none;
-  color: #999;
+  /* Блочная модель */
   display: block;
   padding-left: 20px;
+  margin-left: 35px;
+
+  /* Типографика */
+  font-size: 16px;
+  text-decoration: none;
+  color: #999;
+
+  /* Оформление */
   background-image: url(../../../static/img/icons/back.svg);
   background-repeat: no-repeat;
 }
 
 .chat__text {
-  font-size: 14px;
+  /* Блочная модель */
   margin: 0;
+
+  /* Типографика */
+  font-size: 14px;
   color: #fff;
 }
 
 .chat__act {
-  background: none;
-  border: none;
-  outline: none;
-  font-size: 14px;
+  /* Блочная модель */
   margin: 0;
-  color: #fff;
   padding-left: 40px;
-  background-repeat: no-repeat;
   height: 26px;
+
+   /* Типографика */
+  font-size: 14px;
+  color: #fff;
+
+  /* Оформление */
+  background: none;
+  border: 0;
+  outline: 0;
+  background-repeat: no-repeat;
   cursor: pointer;
 }
 
 .chat__act_insert {
+  /* Оформление */
   background-image: url(../../../static/img/icons/insert.svg);
 }
 
 .chat__act_delete {
+  /* Оформление */
   background-image: url(../../../static/img/icons/delete.svg);
 }

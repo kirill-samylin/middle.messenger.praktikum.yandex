@@ -1,34 +1,33 @@
 import { EventBus } from './../EventBus/EventBus';
-import { makeUUID } from '../uuid';
 
 enum EVENTS {
   INIT = "init",
   FLOW_CDM = "flow:component-did-mount",
   FLOW_RENDER = "flow:render",
   FLOW_CDU = "flow:component-did-update",
-};
+}
 
 type TTarget = {
   prop: string
-};
+}
 
 type THTML = HTMLElement | null;
+
 type TEvents = {
-  name:string, selector:string, cb:EventListenerOrEventListenerObject
+  name:string, selector:string, cb:any
 }
+
 type TProps = { events?: Array<TEvents> };
-export class Block {
+export abstract class Block {
   readonly eventBus: EventBus;
   public shell: any;
   public props: TProps;
   public element: THTML;
   public tmpl: string;
-  private _id: string;
   constructor(props: TProps, tmpl?: string) {
-    this.shell = null;;
+    this.shell = null;
     this.eventBus = new EventBus();
     this.element = null;
-    this._id = makeUUID();
     this.tmpl = tmpl || '';
     this.props = this.makePropsProxy(props);
     this.registerEvents();
@@ -99,7 +98,6 @@ export class Block {
     this.shell.innerHTML = element;
     if (this.element === null) {
       this.element = this.shell.firstElementChild;
-      this.element?.setAttribute('data-id', this._id);
     } else {
       this.element?.replaceWith(this.shell.firstElementChild)
     }
@@ -107,7 +105,7 @@ export class Block {
   }
 
 	// Может переопределять пользователь, необязательно трогать
-  public render() {};
+  public render() {}
 
   public getElement() {
     return this.element;

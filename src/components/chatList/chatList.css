@@ -1,7 +1,10 @@
 .chat__list {
-  list-style: none;
+  /* Блочная модель */
   margin: 0;
   padding: 0;
+
+  /* Оформление */
+  list-style: none;
 }
 
 .chat__item {
@@ -9,36 +12,48 @@
 }
 
 .chat__link {
+  /* Блочная модель */
   display: flex;
   justify-content: space-between;
   margin: 13px 35px;
+
+  /* Типографика */
   text-decoration: none;
 }
 
 .chat__author {
+  /* Блочная модель */
   display: flex;
   margin-right: 20px;
   align-items: center;
 }
 
 .chat__user-name {
-  color: #fff;
-  font-size: 13px;
+  /* Блочная модель */
   margin: 0;
   margin-bottom: 5px;
+
+  /* Типографика */
+  color: #fff;
+  font-size: 13px;
 }
 
 .chat__user-message {
+  /* Блочная модель */
+  margin: 0;
+
+  /* Типографика */
   color: #999;
   font-size: 12px;
-  margin: 0;
 }
 
 .chat__user-info {
+  /* Блочная модель */
   margin-left: 15px;
 }
 
 .chat__message-info {
+  /* Блочная модель */
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -46,20 +61,27 @@
 }
 
 .chat__date {
+  /* Блочная модель */
+  margin: 0;
+  /* Типографика */
   font-size: 9px;
   color: #999;
-  margin: 0;
 }
 
 .chat__missed {
+  /* Блочная модель */
   display: flex;
   width: 20px;
   height: 20px;
-  color: #fff;
-  font-size: 11px;
-  background-color: #728bd7;
-  border-radius: 50%;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+
+  /* Типографика */
+  color: #fff;
+  font-size: 11px;
+
+  /* Оформление */
+  background-color: #728bd7;
+  border-radius: 50%;
 }

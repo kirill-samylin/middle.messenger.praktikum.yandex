@@ -1,37 +1,52 @@
 .chat__nav {
+  /* Блочная модель */
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 60px;
-  border-bottom: 3px solid #72767d;
   box-sizing: border-box;
+
+  /* Оформление */
+  border-bottom: 3px solid #72767d;
 }
 
 .chat__search {
+  /* Блочная модель */
+  margin-left: 35px;
+  padding-left: 30px;
+
+  /* Типографика */
+
+  font-size: 16px;
+  color: #fff;
+
+  /* Оформление */
   background: none;
   background-image: url(../../../static/img/icons/search.svg);
   background-repeat: no-repeat;
-  border: none;
-  padding-left: 30px;
-  font-size: 16px;
-  margin-left: 35px;
-  outline: none;
-  color: #fff;
+  border: 0;
+  outline: 0;  
 }
 
 .chat__button {
+  /* Блочная модель */
   margin-right: 35px;
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
   display: flex;
   align-items: center;
+
+  /* Оформление */
+  background: none;
+  border: 0;
+  outline: 0;
+  cursor: pointer;
 }
 
 .chat__button_add {
+  /* Блочная модель */
   width: 30px;
   height: 30px;
+
+  /* Оформление */
   border: 1.5px solid #728bd7;
   border-radius: 50%;
   background-image: url(../../../static/img/icons/plus.svg);
@@ -40,19 +55,26 @@
 }
 
 .chat__title {
+  /* Блочная модель */
+  margin: 0;
+
+  /* Типографика */
   font-size: 20px;
   color: #fff;
-  margin: 0;
 }
 
 .chat__block {
+  /* Блочная модель */
   margin-right: 35px;
   display: flex;
   align-items: center;
 }
 
 .chat__button_edit {
+  /* Блочная модель */
   height: 4px;
   width: 20px;
+
+  /* Оформление */
   background-image: url(../../../static/img/icons/edit.svg);
 }

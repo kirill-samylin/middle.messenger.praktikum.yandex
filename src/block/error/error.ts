@@ -2,13 +2,15 @@ import { Block } from '../../modules/Block';
 import { compileTemplate } from '../../utils/Handlebars';
 import { errorTmpl } from './error.tmpl';
 
-export const errorOptions404: {} = {
+type TError = Record<'code' | 'text' | 'link' | 'href', string>
+
+export const errorOptions404: TError = {
   code: '404',
   text: 'Запрашиваемая Вами страница не найдена.',
   link: 'Вернуться назад',
   href: 'index.html',
 };
-export const errorOptions500: {} = {
+export const errorOptions500: TError = {
   code: '500',
   text: 'Мы уже фиксим...',
   link: 'Вернуться назад',

@@ -1,4 +1,5 @@
 .error {
+  /* Блочная модель */
   width: 100%;
   height: 100%;
   display: flex;
@@ -8,18 +9,25 @@
 }
 
 .error__title {
+  /* Блочная модель */
+  margin: 0;
+
+  /* Типографика */
   font-size: 40px;
   color: #fff;
-  margin: 0;
 }
 
 .error__paragraph {
+  /* Блочная модель */
+  margin: 20px 0;
+
+  /* Типографика */
   font-size: 20px;
   color: #fff;
-  margin: 20px 0;
 }
 
 .error__link {
+  /* Типографика */
   font-size: 14px;
   color: #728bd7;
   text-decoration: none;

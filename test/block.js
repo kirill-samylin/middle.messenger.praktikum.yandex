@@ -1,5 +1,4 @@
 import { EventBus } from './event-bus';
-import { compileTemplate } from './compileTemplate';
 export class Block {
     static EVENTS = {
       INIT: "init",

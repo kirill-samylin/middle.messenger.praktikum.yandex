@@ -1,7 +1,6 @@
 import { validate } from '../../utils/validate';
 
-type TInput = { target: HTMLInputElement };
-
+type TInput = DOMEvent<HTMLInputElement>;
 interface DOMEvent<T extends EventTarget> extends Event {
     target: T
 }
@@ -21,7 +20,7 @@ function handleForm(input: HTMLInputElement) {
     }
 }
 
-function handleValidate(e: DOMEvent<HTMLInputElement>) {
+function handleValidate(e: TInput) {
     const input = e.target;
     handleForm(input);
     const isValid = validate(input);
@@ -72,6 +71,7 @@ function handleFocus(e: TInput):void {
 }
 function handleBlur(e: TInput):void {
     const input = e.target;
+    handleValidate(e);
     input.removeEventListener('input', handleValidate);
 }
 

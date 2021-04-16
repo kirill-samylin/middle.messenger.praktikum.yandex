@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // return (
+        //     <section className="news">
+        //         {(isSaved) ? 
+        //             <ul className="news__cards">
+        //                 {articles && articles.map((card, i) => (
+        //                     <NewsCard key={i} card={card} handleSaved={handleSaved} handleDelete={handleDelete} handleForm={handleForm} />
+        //                 ))}
+        //             </ul> :
+        //             <>
+        //                 <h2 className="news__title">Результаты поиска</h2>
+        //                 <ul className="news__cards">
+        //                     {articles && articles.map((card, i) => (
+        //                         (i<=quantityCards) ? <NewsCard key={i} card={card} handleSaved={handleSaved} handleDelete={handleDelete} handleForm={handleForm} /> : null
+        //                     ))}
+        //                 </ul>
+        //                 {(quantityCards>=articles.length) ? null : <button onClick={loadingCards} type="button" className="news__load">Показать еще</button>}
+        //             </>
+        //         }
+        //     </section>
+        // );
+        // return (
+        //     <section className="news">
+        //     {(isSaved) ? '' : <h2 className="news__title">Результаты поиска</h2>}
+        //     <ul className="news__cards">
+        //         {articles && articles.map((card, i) => (
+        //         (i<=quantityCards || isSaved) ? <NewsCard key={i} card={card} handleSaved={handleSaved} handleDelete={handleDelete} handleForm={handleForm} /> : null
+        //         ))}
+        //     </ul>
+        //         {(isSaved || quantityCards>=articles.length) ? null : <button onClick={loadingCards} type="button" className="news__load">Показать еще</button>}
+        //     </section>
+        // );
+const n = 1;
+function one(n) {
+    console.log(n) //3
+}
+function two(n) {
+    console.log(n); //2
+    setTimeout(() => {
+    one(n+1);
+    }, 1000);
+}
+function three(n) {
+    console.log(n); //1
+    two(n+1);
+}
+new Promise(() => { 
+    console.log(n-2)
+}) //-1
+three(n)
+console.log(n+100);// 101
+
+// console.log('start');
+
+// setTimeout(() => console.log('one'), 0);
+// setTimeout(() => console.log('two'), 1000);
+// Promise.resolve().then(() => console.log('three'));
+// console.log('end')
+</script>
+</body>
+</html>
